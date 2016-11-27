@@ -80,7 +80,6 @@ public class NewJApplet extends javax.swing.JApplet {
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel1.setText("Meta Search!");
@@ -96,8 +95,6 @@ public class NewJApplet extends javax.swing.JApplet {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jLabel2.setText("jLabel2");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,9 +102,7 @@ public class NewJApplet extends javax.swing.JApplet {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(107, 107, 107)
-                        .addComponent(jLabel2)
-                        .addGap(175, 175, 175)
+                        .addGap(323, 323, 323)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(117, 117, 117)
@@ -123,9 +118,7 @@ public class NewJApplet extends javax.swing.JApplet {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                .addComponent(jLabel1)
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -138,22 +131,33 @@ public class NewJApplet extends javax.swing.JApplet {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
            searchTerm = jTextField1.getText();
-           //path = "https://www.google.com/search?q=" + searchTerm + "&num=10";
-          //googleLinks.add("hello");
-           jTextArea1.setText("Result:" + "\n");
-             String links;
+       //    jTextArea1.setText(" Google Result:" + "\n");
+             String Glinks;
+             String Blinks;
        try {
-           links = getsearchBing(searchTerm);
-           googleLinks = Bingparse(links);
+           
+          Glinks = getsearchGoogle(searchTerm);
+          Blinks = getsearchBing(searchTerm);
+          bingLinks = Bingparse(Blinks);
+          googleLinks = Googleparse(Glinks);
            
        } catch (Exception ex) {
            ex.printStackTrace();
-           jLabel2.setText("nope");
+           //jLabel2.setText("nope");
        }
-           
+       
+      
            for(int i = 0; i<googleLinks.size(); i++) {
                String temp = jTextArea1.getText();
                jTextArea1.setText(temp + "\n" + googleLinks.get(i) + "\n");
+           }
+           
+           String temp1 = jTextArea1.getText();
+           jTextArea1.setText(temp1 + "\n" + "Bing Results:" + "\n");
+           
+           for(int i = 0; i<bingLinks.size(); i++) {
+               String temp = jTextArea1.getText();
+               jTextArea1.setText(temp + "\n" + bingLinks.get(i) + "\n");
            }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -162,7 +166,6 @@ public class NewJApplet extends javax.swing.JApplet {
         final InputStream stream; 
         String steam;
         try {
-             //jLabel2.setText("na");
         final String agent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
         URL url = new URL(path);
         final URLConnection connection = url.openConnection();
@@ -171,7 +174,6 @@ public class NewJApplet extends javax.swing.JApplet {
         stream = connection.getInputStream();
         
         steam = returnString(stream);
-       // System.out.println(steam);
         return steam;
         
         } catch (Exception ex) {
@@ -187,16 +189,12 @@ public class NewJApplet extends javax.swing.JApplet {
         String steam;
         
         try {
-             //jLabel2.setText("na");
-       // final String agent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
         URL url = new URL(path);
         final URLConnection connection = url.openConnection();
         
-       // connection.setRequestProperty("Basic");
         stream = connection.getInputStream();
         
         steam = returnString(stream);
-        //System.out.println(steam);
         return steam;
         
         } catch (Exception ex) {
@@ -235,29 +233,19 @@ public class NewJApplet extends javax.swing.JApplet {
         List<String> fin = new ArrayList<String>();
         
         try{
-        String part1 = "<cite>";
-        String part2 = "</cite>";
-        // fin.add("test");
+         
+        String part1 = "<h2><a href=";
+        String part2 =">";
         Pattern pat = Pattern.compile(Pattern.quote(part1) + "(.*?)" + Pattern.quote(part2));
         Matcher mat = pat.matcher(html);
         
         while(mat.find()) {
             String name = mat.group(0).trim();
-            
-            String[][] replace = {{"<cite>", ""}, 
-                                  {"</cite>", ""},
-                                  {"<strong>", ""},
-                                 {"</strong>", ""}};
-            
-        
-            for(String[] replaces :replace) {
-                name = name.replace(replaces[0], replaces[1]);
-            }
-           // name = name.substring(name.indexOf("<cite>") + 7);
-          //  name = name.substring(0, name.indexOf("</cite>"));
+            name = name.substring(13);
+            name = name.substring(0, name.indexOf("\" h="));
+
             System.out.println(name);
             fin.add(name);
-           // fin.add("test");
         }
         return fin;
         } catch (Exception ex) {
@@ -295,7 +283,6 @@ public class NewJApplet extends javax.swing.JApplet {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;

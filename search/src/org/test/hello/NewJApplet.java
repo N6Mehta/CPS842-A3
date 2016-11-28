@@ -20,12 +20,13 @@ import java.util.regex.Pattern;
  */
 public class NewJApplet extends javax.swing.JApplet {
 
-   public static String query;
-   public static String searchTerm;
-   public static String path;
-   public static List<String> googleLinks;
-   public static List<String> bingLinks;
-    /**
+   String query;
+   String searchTerm;
+   String path;
+  // public static List<String> googleLinks;
+   List<String> finalLinks;
+   ArrayList<Integer> awards = new ArrayList<Integer>();
+          /**
      * Initializes the applet NewJApplet
      */
     @Override
@@ -138,8 +139,12 @@ public class NewJApplet extends javax.swing.JApplet {
            
           Glinks = getsearchGoogle(searchTerm);
           Blinks = getsearchBing(searchTerm);
-          bingLinks = Bingparse(Blinks);
-          googleLinks = Googleparse(Glinks);
+          finalLinks = Bingparse(Blinks);
+          finalLinks.addAll(Googleparse(Glinks));
+         // System.out.println(finalLinks.size());
+         
+         award(finalLinks,awards);
+         merge(finalLinks,awards);
            
        } catch (Exception ex) {
            ex.printStackTrace();
@@ -147,20 +152,102 @@ public class NewJApplet extends javax.swing.JApplet {
        }
        
       
-           for(int i = 0; i<googleLinks.size(); i++) {
+      //sortGivenArray();
+      
+       
+           for(int i = 0; i<finalLinks.size(); i++) {
                String temp = jTextArea1.getText();
-               jTextArea1.setText(temp + "\n" + googleLinks.get(i) + "\n");
+               jTextArea1.setText(temp + "\n" + finalLinks.get(i) + "\n");
            }
            
-           String temp1 = jTextArea1.getText();
-           jTextArea1.setText(temp1 + "\n" + "Bing Results:" + "\n");
+           //String temp1 = jTextArea1.getText();
+           //jTextArea1.setText(temp1 + "\n" + "Bing Results:" + "\n");
            
-           for(int i = 0; i<bingLinks.size(); i++) {
-               String temp = jTextArea1.getText();
-               jTextArea1.setText(temp + "\n" + bingLinks.get(i) + "\n");
-           }
+         //  for(int i = 0; i<bingLinks.size(); i++) {
+          //     String temp = jTextArea1.getText();
+           //    jTextArea1.setText(temp + "\n" + bingLinks.get(i) + "\n");
+          // }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void award(List<String> url, List<Integer> award)
+    {
+	int N = 10;
+        boolean batman = false;
+	int size = url.size();	
+        //System.out.println(size);
+	for(int i=0; i <= size; i++)
+	{
+           
+             if(i==9){
+                 award.add(N-i);
+                 //System.out.println(N-i);
+                 if(batman = true) break ;
+                 i=0;
+                 batman = true;
+              }
+              else 
+                   award.add(N-i);  
+               //System.out.println(N-i);
+             
+	}
+	
+    }    
+    
+    
+    public void merge(List<String> url,List<Integer> awards)
+    {
+	String holder;
+	for(int i=0;i<url.size() ;i++)
+	{
+		holder = url.get(i);
+                System.out.println(holder);
+		
+		for(int j=i; j < url.size(); j++)
+		{
+                    System.out.println(j);
+			if(holder == url.get(j))//if they match
+			{
+				int e = awards.get(i) + awards.get(j);//add them together
+				awards.set(i,e);
+				awards.remove(j);
+				url.remove(j);
+			}
+		}
+	}
+    }
+    
+    
+    public void sortGivenArray(){
+         
+        int smallInt = 0;
+        int smallIntIndex = 0;      
+         
+        for(int i=1;i<awards.size();i++){
+             
+            smallInt = awards.get(i-1);
+            smallIntIndex = i-1;
+             
+            for(int j=i;j<awards.size();j++){
+                if(awards.get(j)<smallInt){
+                    smallInt = awards.get(j);
+                    smallIntIndex = j;
+                }
+            }
+         
+            //Swap the smallest element with the first element of unsorted subarray
+            swap(i-1, smallIntIndex);
+	    swap(finalLinks.indexOf(i-1), smallIntIndex);             
+        }
+    }
+     
+    void swap(int p, int q)
+    {
+        int temp;
+        temp = p;
+        p = q;
+        q = temp;
+    }
+    
     public String getsearchGoogle(String searchTerm){
        path = "https://www.google.com/search?q=" + searchTerm + "&num=10";
         final InputStream stream; 
@@ -244,7 +331,7 @@ public class NewJApplet extends javax.swing.JApplet {
             name = name.substring(13);
             name = name.substring(0, name.indexOf("\" h="));
 
-            System.out.println(name);
+            //System.out.println(name);
             fin.add(name);
         }
         return fin;
